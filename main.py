@@ -9,23 +9,19 @@ except ImportError:
     sys.exit(1)
 
 def stream_employee_data(filenames):
-    """
-    Потоковое чтение CSV.
-    Строки не сохраняются — функция генерирует очищенные записи.
-    """
+    # Потоковое чтение CSV. Строки не сохраняются.
     global err_counter
     for filename in filenames:
         try:
             with open(filename, 'r', encoding='utf-8') as file:
                 reader = csv.DictReader(file, delimiter=',')
                 if reader.fieldnames is None:
+                    err_counter += 1
                     print(f"Ошибка: файл {filename} пустой или повреждён.")
                     continue
                 reader.fieldnames = [name.strip() for name in reader.fieldnames]
-
                 for row in reader:
                     clean_row = {}
-
                     for key, value in row.items():
                         if key is None:
                             continue
@@ -46,12 +42,9 @@ def stream_employee_data(filenames):
             continue
 
 def calculate_average_performance_streaming(filenames):
-    """
-    Потоковый подсчёт средних значений:
-    храним только сумму и количество по каждой должности.
-    """
-    totals = {}      # {position: sum}
-    counts = {}      # {position: count}
+    # Потоковый подсчёт средних значений: храним только сумму и количество по каждой должности.
+    totals = {}
+    counts = {}
     for employee in stream_employee_data(filenames):
         if "position" not in employee:
             print("Предупреждение: отсутствует поле 'position'. Строка пропущена.")
@@ -77,10 +70,13 @@ def calculate_average_performance_streaming(filenames):
         for position in totals
     ]
     report.sort(key=lambda x: x[1], reverse=True)
-    return report
+    headers = ["position", "performance"]
+    return report, headers
 
 def tasks_report(filenames):
-    return [["test", "test_answ"]]
+    report = [["test", "test_answ"]]
+    headers = ["test_head", "test_head_answer"]
+    return report, headers
 
 REPORTS = {
     "performance": calculate_average_performance_streaming,
@@ -93,9 +89,9 @@ def main():
     parser.add_argument("--files", nargs="+", required=True, help="CSV файлы")
     parser.add_argument("--report", required=True, choices=REPORTS.keys())
     args, unknown = parser.parse_known_args()
-    report = REPORTS[args.report](args.files)
+    report, headers = REPORTS[args.report](args.files)
     if err_counter < len(args.files):
-        print(tabulate(report, headers=["position", "performance"], tablefmt="simple"))
+        print(tabulate(report, headers=headers, tablefmt="simple"))
 
 if __name__ == "__main__":
     main()

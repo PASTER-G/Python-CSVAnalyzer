@@ -12,11 +12,13 @@ python main.py --files a.csv --report performance --debug --test 123
 ```
 
 ## Добавление отчёта
-1. Создайте функцию анализа:
+1. Создайте функцию анализа. Подставьте искомые данные и укажите необходимые заголовки:
 ```python
 def tasks_report(filenames):
     ...
-    return [[position, value]]
+    report = [["<your_result>", "<your_result>"]]
+    headers = ["<your_header>", "<your_header_answer>"]
+    return report, headers
 ```
 2. Зарегистритруйте её в словаре *REPORTS*:
 ```python
@@ -31,4 +33,4 @@ python3 main.py --files data.csv --report tasks
 ```
 
 ## Тестирование
-Проект использует `pytest` и `pytest-cov`. На данный момент покрытие кода - **69%**
+Проект использует `pytest` и `pytest-cov`. На данный момент покрытие кода - **67%**

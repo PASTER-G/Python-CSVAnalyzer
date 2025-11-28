@@ -47,7 +47,7 @@ Design,4.0
 """
     filename = create_test_csv(content)
     try:
-        result = calculate_average_performance_streaming([filename])
+        result, _ = calculate_average_performance_streaming([filename])
         assert len(result) == 2
         dev = next(r for r in result if r[0] == "Dev")
         design = next(r for r in result if r[0] == "Design")
@@ -63,7 +63,8 @@ Dev,invalid
 """
     filename = create_test_csv(content)
     try:
-        result = calculate_average_performance_streaming([filename])
+        result, _ = calculate_average_performance_streaming([filename])
+        print(result)
         assert len(result) == 1
         assert result[0][0] == "Dev"
         assert result[0][1] == 4.5
